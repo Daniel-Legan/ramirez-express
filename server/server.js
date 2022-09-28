@@ -18,12 +18,15 @@ app.use(express.static('./server/public'));
 // http://localhost:3000/comments
 // call this function
 
+
+// "The GET /comments ENDPOINT!"
 app.get('/comments', (req, res) => {
     console.log('Jimmy wants those comments!');
 
     res.send(comments);
 });
 
+// "The GET /comments/first ENDPOINT!"
 app.get('/comments/first', (req, res) => {
     console.log('in /comments/first');
 
