@@ -3,6 +3,7 @@ console.log('in client.js');
 $(document).ready(onReady);
 
 let comments = []
+let firstComment;
 
 function onReady() {
     console.log('so ready');
@@ -10,6 +11,13 @@ function onReady() {
     loadComments();
 
     $(document).on('click', '#loadFirstComment', loadFirstComment);
+
+    $('#commentForm').on('submit', onAddComment);
+}
+
+function onAddComment(evt) {
+    evt.preventDefault();
+    console.log('in onAddComment');
 }
 
 // get comments (state)
@@ -52,9 +60,12 @@ function loadFirstComment() {
     })
         .then((response) => {
             // code goes here.....
+            firstComment = response;
+
             $('h1').append(`
                 ${response}
             `);
+
             console.log('GET /comments/first', response);
         })
         .catch((err) => {
