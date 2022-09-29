@@ -1,23 +1,49 @@
 console.log('in client.js');
 
-$(document).ready(onReady);
 
 let comments = []
 let firstComment;
+
+$(document).ready(onReady);
 
 function onReady() {
     console.log('so ready');
 
     loadComments();
+    loadFirstComment();
 
-    $(document).on('click', '#loadFirstComment', loadFirstComment);
-
-    $('#commentForm').on('submit', onAddComment);
+    $('#commentForm').on('submit', onAddComment)
 }
 
 function onAddComment(evt) {
     evt.preventDefault();
-    console.log('in onAddComment');
+
+    let newComment = {
+        message: $('#commentInput').val(),
+        author: 'Jimmy'
+    };
+
+    $.ajax({
+        url: '/comments',
+        method: 'POST',
+        // Always use an object
+        // if you know what's good for ya
+        //
+        // 👇 this becomes req.body
+        // on the server
+        data: newComment
+    })
+        .then(response => {
+            console.log('POST /comments response', response);
+
+            // Get the latest comments from the server
+            // and render them 
+            // (including Jimmy's new comment)
+            loadComments();
+        })
+        .catch(err => {
+            console.log('POST /comments error', err);
+        });
 }
 
 // get comments (state)
@@ -62,9 +88,7 @@ function loadFirstComment() {
             // code goes here.....
             firstComment = response;
 
-            $('h1').append(`
-                ${response}
-            `);
+            render();
 
             console.log('GET /comments/first', response);
         })
@@ -74,11 +98,13 @@ function loadFirstComment() {
 }
 
 function render() {
-    for(let comment of comments) {
-        $('body').append(`
-            <ul>
-                <li>${comment}</li>
-            </ul>
+
+    $('#comments').empty();
+    for(let cmt of comments) {
+        $('#comments').append(`
+                <li>${cmt}</li>
         `);
     }
+
+    $('#firstComment').text(firstComment);
 }
